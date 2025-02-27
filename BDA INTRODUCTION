@@ -1,0 +1,43 @@
+Big Data
+    Big data refers to extremely large and diverse collections of structured, unstructured, and semi-structured 
+    data that continues to grow exponentially over time. These datasets are so huge and complex in volume, velocity, 
+    and variety, that traditional data management systems cannot store, process, and analyze them. 
+
+The Vs of big data
+    Big data definitions may vary slightly, but it will always be described in terms of volume, velocity, and variety. 
+    These big data characteristics are often referred to as the “3 Vs of big data” and were first defined by Gartner in 2001.
+
+1.Volume:
+    As its name suggests, the most common characteristic associated with big data is its high volume. 
+    This describes the enormous amount of data that is available for collection and produced from a variety of sources 
+    and devices on a continuous basis.
+2.Velocity
+    Big data velocity refers to the speed at which data is generated. Today, data is often produced in real time or near real time, and therefore, it must also be processed, accessed, and analyzed at the same rate to have any meaningful impact. 
+3.Variety
+    Data is heterogeneous, meaning it can come from many different sources and can be structured, unstructured, or semi-structured. 
+    In addition to these three original Vs, three others that are often mentioned in relation to harnessing the power of big data: 
+    veracity, variability, and value.  
+•	Veracity: Big data can be messy, noisy, and error-prone, which makes it difficult to control the quality and accuracy of the data. 
+            Large datasets can be unwieldy and confusing, while smaller datasets could present an incomplete picture
+•	Variability: The meaning of collected data is constantly changing, which can lead to inconsistency over time. 
+              These shifts include not only changes in context and interpretation but also data collection methods based on 
+              the information that companies want to capture and analyze.
+•	Value: It’s essential to determine the business value of the data you collect. Big data must contain the right data 
+              and then be effectively analyzed in order to yield insights that can help drive decision-making. 
+
+How does big data work?
+Making big data work requires three main actions: 
+•	Integration: Big data collects terabytes, and sometimes even petabytes, of raw data from many sources that must be received, processed, 
+                and transformed into the format that business users and analysts need to start analyzing it. 
+•	Management: Big data needs big storage, whether in the cloud, on-premises, or both. Data must also be stored in whatever form required.
+                It also needs to be processed and made available in real time. 
+•	Analysis: The final step is analyzing and acting on big data—otherwise, the investment won’t be worth it. Beyond exploring the data 
+            itself, it’s also critical to communicate and share insights across the business in a way that everyone can understand. 
+            This includes using tools to create data visualizations like charts, graphs, and dashboards.
+
+Big data benefits:
+•	Improved decision-making
+•	More efficient operations 
+•	Better customer experiences
+•	Improved risk management
+
