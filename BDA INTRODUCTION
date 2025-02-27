@@ -6,7 +6,6 @@ Big Data
 The Vs of big data
     Big data definitions may vary slightly, but it will always be described in terms of volume, velocity, and variety. 
     These big data characteristics are often referred to as the “3 Vs of big data” and were first defined by Gartner in 2001.
-
 1.Volume:
     As its name suggests, the most common characteristic associated with big data is its high volume. 
     This describes the enormous amount of data that is available for collection and produced from a variety of sources 
