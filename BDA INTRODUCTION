@@ -41,3 +41,20 @@ Big data benefits:
 •Better customer experiences
 •Improved risk management
 
+4 types of big data technologies
+Big data technologies typically fall into four main types: data storage, data mining, data analytics, 
+    and data visualization. Each uses certain tools, and depending on the type of big data technology 
+    required, you’ll want to choose the right tool for your business needs.
+1.Data storage
+    Big data technology deals with data storage and can fetch, store, and manage big data. 
+    Two commonly used tools are Apache Hadoop and MongoDB. 
+2.Data mining
+    Data mining extracts useful patterns and trends from the raw data. Big data technologies like 
+    Rapidminer and Apache Mahout can turn unstructured and structured data into usable information.
+3.Data analytics
+    This is where users perform algorithms, models, and predictive analytics using 
+    tools such as Apache Spark and Splunk.
+4. Data visualization
+    Finally, you can use big data technologies to create stunning visualizations from the data. 
+    Example: Tableau, Power BI.
+
