@@ -1,0 +1,77 @@
+1.Create a Hadoop cluster.
+
+Hadoop
+  Hadoop is an open source framework based on Java that manages the storage and processing of large amounts of data for applications. 
+  Hadoop uses distributed storage and parallel processing to handle big data and analytics jobs, breaking workloads down into smaller 
+  workloads that can be run at the same time.
+
+Four modules comprise the primary Hadoop framework and work collectively to form the Hadoop ecosystem:
+
+•Hadoop Distributed File System (HDFS): HDFS is a distributed file system in which individual Hadoop nodes operate on data 
+        that resides in their local storage. This removes network latency, providing high-throughput access to application data.
+        It is designed to store large files by splitting them into smaller blocks (typically 128 MB or 256 MB) 
+        and distributing them across multiple nodes in the cluster.
+
+•Yet Another Resource Negotiator (YARN): YARN is a resource-management platform responsible for managing compute resources in clusters 
+        and using them to schedule users’ applications. It performs scheduling and resource allocation across the Hadoop system.
+
+•MapReduce: MapReduce is a programming model for large-scale data processing. It is used for processing large data sets 
+        in a distributed manner. MapReduce works in two phases: the Map phase (where data is processed in parallel) 
+        and the Reduce phase (where results are aggregated).
+
+•Hadoop Common: Hadoop Common includes the libraries and utilities used and shared by other Hadoop modules. 
+
+Installation:
+
+•Install JDK on Ubuntu: 
+vaagdevi:~$ sudo apt update
+ ----------------
+|***screenshot***|
+ ----------------
+vaagdevi:~$ sudo apt install openjdk-8-jdk -y
+vaagdevi:~$ java -version
+
+•Install OpenSSH on Ubuntu
+vaagdevi:~$ sudo apt install openssh-server openssh-client -y
+
+
+•Create Hadoop User
+vaagdevi:~$ sudo adduser hdoop
+vaagdevi:~$ su - hdoop
+
+•Enable Passwordless SSH for Hadoop User
+vaagdevi:~$ ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+vaagdevi:~$ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+vaagdevi:~$ chmod 0600 ~/.ssh/authorized_keys
+vaagdevi:~$ ssh localhost
+
+•Download and Install Hadoop on Ubuntu
+1. Visit the official Apache Hadoop project page and select the version of Hadoop you want to implement. select binary file.
+2. Use the provided mirror link and download the Hadoop package using the wget command:
+vaagdevi:~$ wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz
+3. Once the download completes, use the tar command to extract the .tar.gz file and initiate the Hadoop installation:
+vaagdevi:~$ tar xzf hadoop-3.4.0.tar.gz
+
+•Configure Hadoop Environment Variables (bashrc)
+The .bashrc config file is a shell script that initializes user-specific settings, such as environment variables, aliases, and functions.
+1. Edit the .bashrc shell configuration file using a text editor of your choice (we will use nano):
+vaagdevi:~$ nano .bashrc
+2. Define the Hadoop environment variables by adding the following content to the end of the file:
+#Hadoop Related Options
+export HADOOP_HOME=/home/hdoop/hadoop-3.4.0
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
+3. Once you add the variables, save and exit the .bashrc file.
+4. Run the command below to apply the changes to the current running environment:
+vaagdevi:~$ source ~/.bashrc
+•Edit hadoop-env.sh File
+1. Use the previously created $HADOOP_HOME variable to access the hadoop-env.sh file:
+vaagdevi:~$ nano $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+2. Uncomment the $JAVA_HOME variable and replace the following.
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
