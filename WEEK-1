@@ -35,10 +35,6 @@ vaagdevi:~$ java -version
 vaagdevi:~$ sudo apt install openssh-server openssh-client -y
 
 
-•Create Hadoop User
-vaagdevi:~$ sudo adduser hdoop
-vaagdevi:~$ su - hdoop
-
 •Enable Passwordless SSH for Hadoop User
 vaagdevi:~$ ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
 vaagdevi:~$ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
