@@ -23,7 +23,7 @@ Four modules comprise the primary Hadoop framework and work collectively to form
 
 Installation:
 
-•Install JDK on Ubuntu: 
+Step 1: Install JDK on Ubuntu: 
 vaagdevi:~$ sudo apt update
  ----------------
 |***screenshot***|
@@ -35,26 +35,34 @@ vaagdevi:~$ java -version
 vaagdevi:~$ sudo apt install openssh-server openssh-client -y
 
 
-•Enable Passwordless SSH for Hadoop User
+Step 2 •Enable Passwordless SSH for Hadoop User
 vaagdevi:~$ ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
 vaagdevi:~$ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 vaagdevi:~$ chmod 0600 ~/.ssh/authorized_keys
 vaagdevi:~$ ssh localhost
 
-•Download and Install Hadoop on Ubuntu
-1. Visit the official Apache Hadoop project page and select the version of Hadoop you want to implement. select binary file.
-2. Use the provided mirror link and download the Hadoop package using the wget command:
-vaagdevi:~$ wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz
-3. Once the download completes, use the tar command to extract the .tar.gz file and initiate the Hadoop installation:
-vaagdevi:~$ tar xzf hadoop-3.4.0.tar.gz
 
-•Configure Hadoop Environment Variables (bashrc)
+Step 3•Download Hadoop
+
+vaagdevi:~$ mkdir hdoop 
+vaagdevi:~$ cd hdoop
+a. Visit the official Apache Hadoop project page and select the version of Hadoop you want to implement. select binary file.
+b. Use the provided mirror link and download the Hadoop package using the wget command:
+vaagdevi:~/hdoop$ wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz
+c. Once the download completes, use the tar command to extract the .tar.gz file and initiate the Hadoop installation:
+vaagdevi:~/hdoop$ tar xzf hadoop-3.3.6.tar.gz
+
+Rename the folder
+vaagdevi:~/hdoop$ mv hadoop-3.3.6 hadoop
+
+Step 4•Configure Hadoop 
+a)Hadoop Environment Variables (bashrc)
 The .bashrc config file is a shell script that initializes user-specific settings, such as environment variables, aliases, and functions.
-1. Edit the .bashrc shell configuration file using a text editor of your choice (we will use nano):
-vaagdevi:~$ nano .bashrc
-2. Define the Hadoop environment variables by adding the following content to the end of the file:
+i). Edit the .bashrc shell configuration file using a text editor of your choice (we will use nano):
+vaagdevi:~/hdoop$ nano ~/.bashrc
+ii) Define the Hadoop environment variables by adding the following content to the end of the file:
 #Hadoop Related Options
-export HADOOP_HOME=/home/hdoop/hadoop-3.4.0
+export HADOOP_HOME=/home/vaagdevi/hdoop/hadoop
 export HADOOP_INSTALL=$HADOOP_HOME
 export HADOOP_MAPRED_HOME=$HADOOP_HOME
 export HADOOP_COMMON_HOME=$HADOOP_HOME
@@ -63,43 +71,61 @@ export YARN_HOME=$HADOOP_HOME
 export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
-3. Once you add the variables, save and exit the .bashrc file.
-4. Run the command below to apply the changes to the current running environment:
+
+iii). Once you add the variables, save and exit the .bashrc file. ctrl+s & ctrl+x.
+
+iv). Run the command below to apply the changes to the current running environment:
 vaagdevi:~$ source ~/.bashrc
-•Edit hadoop-env.sh File
+
+Step 5: Setting java path for hadoop
+Now copy java home path by following command
+vaagdevi:~/hdoop$ echo $JAVA_HOME
+/usr/lib/jvm/java-8-openjdk-amd64
+
 1. Use the previously created $HADOOP_HOME variable to access the hadoop-env.sh file:
-vaagdevi:~$ nano $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+vaagdevi:~/hdoop$ nano $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
 2. Uncomment the $JAVA_HOME variable and replace the following.
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
+Step 6: Configure Hadoop files
 
-After editing the .bashrc file, source it to apply the changes:
-vaagdevi: /opt/hadoop $ source ~/.bashrc
-Step 4: Configure Hadoop
 Navigate to the Hadoop configuration directory and edit the configuration files.
+vaagdevi:~/hdoop$ cd /etc/hadoop
+
 1. Edit core-site.xml
 Configure the default file system (HDFS):
-vaagdevi: /opt/hadoop $ cd /etc/hadoop
-vaagdevi: /opt/hadoop/etc/hadoop $ nano core-site.xml
+
+vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano core-site.xml
 Add the following configuration inside <configuration>:
+
 <property>
   <name>fs.defaultFS</name>
   <value>hdfs://localhost:9000</value>
 </property>
 
 2. Edit hdfs-site.xml
-Configure HDFS settings:
-vaagdevi: /opt/hadoop/etc/hadoop $ nano hdfs-site.xml
+Create a directory dfsdata and create 2 new directories inside it with
+namenode & datanode
+vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano hdfs-site.xml
 Add the following configuration inside <configuration>:
+
+<property>
+<name>dfs.data.dir</name>
+  <value>$HADOOP_HOME/dfsdata/namenode</value>
+</property>
+<property>
+  <name>dfs.data.dir</name>
+  <value>$HADOOP_HOME/dfsdata/datanode</value>
+</property>
 <property>
   <name>dfs.replication</name>
-  <value>1</value> <!-- Single-node setup, replication = 1 -->
+  <value>1</value>
 </property>
 
 3. Edit mapred-site.xml
 Configure the MapReduce framework:
-vaagdevi: /opt/hadoop/etc/hadoop $ cp mapred-site.xml.template mapred-site.xml
-vaagdevi: /opt/hadoop/etc/hadoop $ nano mapred-site.xml
+vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano mapred-site.xml
 Add the following inside <configuration>:
 <property>
 <name>mapreduce.framework.name</name>
@@ -108,35 +134,32 @@ Add the following inside <configuration>:
 
 4. Edit yarn-site.xml
 Configure YARN settings:
-vaagdevi: /opt/hadoop/etc/hadoop $ nano yarn-site.xml
-Add the following configuration inside <configuration>:
-<property>
-  <name>yarn.resourcemanager.address</name>
-  <value>localhost:8032</value>
-</property>
-<property>
-  <name>yarn.nodemanager.aux-services</name>
-  <value>mapreduce_shuffle</value>
-</property>
-<property>
-  <name>yarn.nodemanager.local-dirs</name>
-  <value>/opt/hadoop/yarn/local</value>
-</property>
+vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano yarn-site.xml
+Add the following configuration inside <configuration>
 
+<property> 
+<name>yarn.nodemanager.aux-services</name> 
+<value>mapreduce_shuffle</value> 
+</property> 
+<property> 
+<name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name> 
+<value>org.apache.hadoop.mapred.ShuffleHandler</value> 
+</property>
 
 
 Step 5: Format the Hadoop File System
 Before starting the Hadoop daemons, you need to format the HDFS filesystem:
-vaagdevi: /opt/hadoop/sbin $ hdfs namenode -format
+vaagdevi:~/hdoop/hadoop/sbin $ hdfs namenode -format
+
 Step 6: Start Hadoop Services
 Start the Hadoop daemons (NameNode, DataNode, ResourceManager, NodeManager, etc.):
 # Start HDFS daemons
-vaagdevi: /opt/hadoop/sbin $ start-dfs.sh
+vaagdevi:~/hdoop/hadoop/sbin $ start-dfs.sh
 # Start YARN daemons
-vaagdevi: /opt/hadoop/sbin $ start-yarn.sh
+vaagdevi:~/hdoop/hadoop/sbin $ start-yarn.sh
 Step 7: Verify the Installation
 Check if the Hadoop daemons are running:
-vaagdevi: /opt/hadoop/sbin $ jps
+vaagdevi:~/hdoop/hadoop/sbin $ jps
 You should see the following processes running:
 NameNode
 DataNode
@@ -146,77 +169,3 @@ NodeManager
 Step 8: Access the Hadoop Web UI
 HDFS UI: Open http://localhost:9870/ to access the HDFS UI.
 YARN UI: Open http://localhost:8088/ to access the YARN UI.
-After editing the .bashrc file, source it to apply the changes:
-vaagdevi: /opt/hadoop $ source ~/.bashrc
-Step 4: Configure Hadoop
-Navigate to the Hadoop configuration directory and edit the configuration files.
-1. Edit core-site.xml
-Configure the default file system (HDFS):
-vaagdevi: /opt/hadoop $ cd /etc/hadoop
-vaagdevi: /opt/hadoop/etc/hadoop $ nano core-site.xml
-Add the following configuration inside <configuration>:
-<property>
-  <name>fs.defaultFS</name>
-  <value>hdfs://localhost:9000</value>
-</property>
-
-2. Edit hdfs-site.xml
-Configure HDFS settings:
-vaagdevi: /opt/hadoop/etc/hadoop $ nano hdfs-site.xml
-Add the following configuration inside <configuration>:
-<property>
-  <name>dfs.replication</name>
-  <value>1</value> <!-- Single-node setup, replication = 1 -->
-</property>
-
-3. Edit mapred-site.xml
-Configure the MapReduce framework:
-vaagdevi: /opt/hadoop/etc/hadoop $ cp mapred-site.xml.template mapred-site.xml
-vaagdevi: /opt/hadoop/etc/hadoop $ nano mapred-site.xml
-Add the following inside <configuration>:
-<property>
-<name>mapreduce.framework.name</name>
-<value>yarn</value>
-</property>
-
-4. Edit yarn-site.xml
-Configure YARN settings:
-vaagdevi: /opt/hadoop/etc/hadoop $ nano yarn-site.xml
-Add the following configuration inside <configuration>:
-<property>
-  <name>yarn.resourcemanager.address</name>
-  <value>localhost:8032</value>
-</property>
-<property>
-  <name>yarn.nodemanager.aux-services</name>
-  <value>mapreduce_shuffle</value>
-</property>
-<property>
-  <name>yarn.nodemanager.local-dirs</name>
-  <value>/opt/hadoop/yarn/local</value>
-</property>
-
-
-
-Step 5: Format the Hadoop File System
-Before starting the Hadoop daemons, you need to format the HDFS filesystem:
-vaagdevi: /opt/hadoop/sbin $ hdfs namenode -format
-Step 6: Start Hadoop Services
-Start the Hadoop daemons (NameNode, DataNode, ResourceManager, NodeManager, etc.):
-# Start HDFS daemons
-vaagdevi: /opt/hadoop/sbin $ start-dfs.sh
-# Start YARN daemons
-vaagdevi: /opt/hadoop/sbin $ start-yarn.sh
-Step 7: Verify the Installation
-Check if the Hadoop daemons are running:
-vaagdevi: /opt/hadoop/sbin $ jps
-You should see the following processes running:
-NameNode
-DataNode
-ResourceManager
-NodeManager
-
-Step 8: Access the Hadoop Web UI
-HDFS UI: Open http://localhost:9870/ to access the HDFS UI.
-YARN UI: Open http://localhost:8088/ to access the YARN UI.
-
