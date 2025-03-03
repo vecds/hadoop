@@ -1,23 +1,24 @@
 1.Create a Hadoop cluster.
 
 Hadoop
-  Hadoop is an open source framework based on Java that manages the storage and processing of large amounts of data for applications. 
-  Hadoop uses distributed storage and parallel processing to handle big data and analytics jobs, breaking workloads down into smaller 
-  workloads that can be run at the same time.
+  Hadoop is an open source framework based on Java that manages the storage and processing of large 
+  amounts of data for applications. Hadoop uses distributed storage and parallel processing to handle 
+  big data and analytics jobs, breaking workloads down into smaller workloads that can be run at the same time.
 
 Four modules comprise the primary Hadoop framework and work collectively to form the Hadoop ecosystem:
 
-•Hadoop Distributed File System (HDFS): HDFS is a distributed file system in which individual Hadoop nodes operate on data 
-        that resides in their local storage. This removes network latency, providing high-throughput access to application data.
-        It is designed to store large files by splitting them into smaller blocks (typically 128 MB or 256 MB) 
-        and distributing them across multiple nodes in the cluster.
+•Hadoop Distributed File System (HDFS): HDFS is a distributed file system in which individual Hadoop 
+  nodes operate on data that resides in their local storage. This removes network latency, providing 
+  high-throughput access to application data. It is designed to store large files by splitting them into 
+  smaller blocks (typically 128 MB or 256 MB) and distributing them across multiple nodes in the cluster.
 
-•Yet Another Resource Negotiator (YARN): YARN is a resource-management platform responsible for managing compute resources in clusters 
-        and using them to schedule users’ applications. It performs scheduling and resource allocation across the Hadoop system.
+•Yet Another Resource Negotiator (YARN): YARN is a resource-management platform responsible for managing 
+  compute resources in clusters and using them to schedule users’ applications. It performs scheduling 
+  and resource allocation across the Hadoop system.
 
-•MapReduce: MapReduce is a programming model for large-scale data processing. It is used for processing large data sets 
-        in a distributed manner. MapReduce works in two phases: the Map phase (where data is processed in parallel) 
-        and the Reduce phase (where results are aggregated).
+•MapReduce: MapReduce is a programming model for large-scale data processing. It is used for processing 
+  large data sets in a distributed manner. MapReduce works in two phases: the Map phase (where data is 
+  processed in parallel) and the Reduce phase (where results are aggregated).
 
 •Hadoop Common: Hadoop Common includes the libraries and utilities used and shared by other Hadoop modules. 
 
@@ -34,7 +35,6 @@ vaagdevi:~$ java -version
 •Install OpenSSH on Ubuntu
 vaagdevi:~$ sudo apt install openssh-server openssh-client -y
 
-
 Step 2 •Enable Passwordless SSH for Hadoop User
 vaagdevi:~$ ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
 vaagdevi:~$ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
@@ -48,7 +48,7 @@ vaagdevi:~$ mkdir hdoop
 vaagdevi:~$ cd hdoop
 a. Visit the official Apache Hadoop project page and select the version of Hadoop you want to implement. select binary file.
 b. Use the provided mirror link and download the Hadoop package using the wget command:
-vaagdevi:~/hdoop$ wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.0/hadoop-3.4.0.tar.gz
+vaagdevi:~/hdoop$ wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
 c. Once the download completes, use the tar command to extract the .tar.gz file and initiate the Hadoop installation:
 vaagdevi:~/hdoop$ tar xzf hadoop-3.3.6.tar.gz
 
@@ -56,10 +56,14 @@ Rename the folder
 vaagdevi:~/hdoop$ mv hadoop-3.3.6 hadoop
 
 Step 4•Configure Hadoop 
+
 a)Hadoop Environment Variables (bashrc)
-The .bashrc config file is a shell script that initializes user-specific settings, such as environment variables, aliases, and functions.
+    The .bashrc config file is a shell script that initializes user-specific settings, such as environment 
+    variables, aliases, and functions.
+
 i). Edit the .bashrc shell configuration file using a text editor of your choice (we will use nano):
 vaagdevi:~/hdoop$ nano ~/.bashrc
+
 ii) Define the Hadoop environment variables by adding the following content to the end of the file:
 #Hadoop Related Options
 export HADOOP_HOME=/home/vaagdevi/hdoop/hadoop
@@ -78,22 +82,23 @@ iv). Run the command below to apply the changes to the current running environme
 vaagdevi:~$ source ~/.bashrc
 
 Step 5: Setting java path for hadoop
+
 Now copy java home path by following command
 vaagdevi:~/hdoop$ echo $JAVA_HOME
 /usr/lib/jvm/java-8-openjdk-amd64
 
-1. Use the previously created $HADOOP_HOME variable to access the hadoop-env.sh file:
+a. Use the previously created $HADOOP_HOME variable to access the hadoop-env.sh file:
 vaagdevi:~/hdoop$ nano $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 
-2. Uncomment the $JAVA_HOME variable and replace the following.
+b. Uncomment the $JAVA_HOME variable and replace the following.
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 
 Step 6: Configure Hadoop files
 
 Navigate to the Hadoop configuration directory and edit the configuration files.
-vaagdevi:~/hdoop$ cd /etc/hadoop
+vaagdevi:~/hdoop$ cd /hadoop/etc/hadoop
 
-1. Edit core-site.xml
+a. Edit core-site.xml
 Configure the default file system (HDFS):
 
 vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano core-site.xml
@@ -104,9 +109,9 @@ Add the following configuration inside <configuration>:
   <value>hdfs://localhost:9000</value>
 </property>
 
-2. Edit hdfs-site.xml
-Create a directory dfsdata and create 2 new directories inside it with
-namenode & datanode
+b. Edit hdfs-site.xml
+Create a directory in hadoop folder with "dfsdata" and create 2 new directories inside it with 
+    " namenode " & " datanode ".
 vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano hdfs-site.xml
 Add the following configuration inside <configuration>:
 
@@ -123,16 +128,19 @@ Add the following configuration inside <configuration>:
   <value>1</value>
 </property>
 
-3. Edit mapred-site.xml
+c. Edit mapred-site.xml
+
 Configure the MapReduce framework:
 vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano mapred-site.xml
 Add the following inside <configuration>:
+
 <property>
 <name>mapreduce.framework.name</name>
 <value>yarn</value>
 </property>
 
-4. Edit yarn-site.xml
+d. Edit yarn-site.xml
+
 Configure YARN settings:
 vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano yarn-site.xml
 Add the following configuration inside <configuration>
@@ -148,16 +156,20 @@ Add the following configuration inside <configuration>
 
 
 Step 5: Format the Hadoop File System
+
 Before starting the Hadoop daemons, you need to format the HDFS filesystem:
 vaagdevi:~/hdoop/hadoop/sbin $ hdfs namenode -format
 
 Step 6: Start Hadoop Services
+
 Start the Hadoop daemons (NameNode, DataNode, ResourceManager, NodeManager, etc.):
 # Start HDFS daemons
 vaagdevi:~/hdoop/hadoop/sbin $ start-dfs.sh
 # Start YARN daemons
 vaagdevi:~/hdoop/hadoop/sbin $ start-yarn.sh
+
 Step 7: Verify the Installation
+
 Check if the Hadoop daemons are running:
 vaagdevi:~/hdoop/hadoop/sbin $ jps
 You should see the following processes running:
@@ -167,5 +179,8 @@ ResourceManager
 NodeManager
 
 Step 8: Access the Hadoop Web UI
+
 HDFS UI: Open http://localhost:9870/ to access the HDFS UI.
 YARN UI: Open http://localhost:8088/ to access the YARN UI.
+
+***********************************************************
