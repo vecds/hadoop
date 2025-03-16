@@ -116,12 +116,12 @@ vaagdevi:~/hdoop/hadoop/etc/hadoop $ nano hdfs-site.xml
 Add the following configuration inside <configuration>:
 
 <property>
-<name>dfs.data.dir</name>
-  <value>$HADOOP_HOME/dfsdata/namenode</value>
+<name>dfs.namenode.name.dir</name>
+  <value>/home/vaagdevi/hdoop/hadoop/dfsdata/namenode</value>
 </property>
 <property>
-  <name>dfs.data.dir</name>
-  <value>$HADOOP_HOME/dfsdata/datanode</value>
+  <name>dfs.datanode.data.dir</name>
+  <value>/home/vaagdevi/hdoop/hadoop/dfsdata/datanode</value>
 </property>
 <property>
   <name>dfs.replication</name>
