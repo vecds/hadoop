@@ -89,6 +89,7 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 Step 5:  Configure HBase (Standalone Mode):
 
 Navigate to the HBase configuration directory and edit the configuration files.
+
 vaagdevi:~/hdoop$ cd /hbase/conf
 
 a. Edit hbase-site.xml
@@ -123,11 +124,14 @@ Add the following configuration inside <configuration>:
     <value>/home/vaagdevi/hdoop/hbase/HFiles</value>
   </property>
 
-*save and exit the hbase=site.xml file. ctrl+s & ctrl+x.
+*save and exit the hbase-site.xml file. ctrl+s & ctrl+x.
+(now create 2 directories with "HFiles" & "zookeeper" to store logs in hbase folder)
 
 Step 7: Verify the Installation
 
 vaagdevi:~/hdoop/hbase/bin$ start-hbase.sh
+*check logs created in HFiles & zookeeper diectories. 
+
 Check if the Hadoop&Hbase daemons are running:
 vaagdevi:~/hdoop/hbase/bin $ jps
 You should see the following processes running:
@@ -139,17 +143,22 @@ HMaster
 
 Step 8: HBase Shell
 vaagdevi:~/hdoop/hbase $ ./bin/hbase shell
+
 **to check status of servers
 shell> status
+
 **to create a table (create <table name>,<column family> )
 shell> create 'emp', 'personal data', 'professional data'
+
 **to verify 
 shell> list
+
 **to insert data into table(put <table name>,row1,<colfamily:colname>,<value>)
 put 'emp','1','personal data:name','navi'
 put 'emp','1','personal data:city','hyderabad'
 put 'emp','1','professional data:designation','manager'
 put 'emp','1','professional data:salary','50000'
+
 **to show table data
 shell> scan 'emp'
 
