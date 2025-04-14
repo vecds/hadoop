@@ -1,0 +1,158 @@
+3.Process BigData using HBase.
+
+HBase:
+HBase is a column-oriented database that’s an open-source implementation of Google’s Big Table storage architecture. 
+It can manage structured and semi-structured data and has some built-in features such as scalability, versioning, compression and garbage collection.
+
+Since its uses write-ahead logging and distributed configuration, it can provide fault-tolerance and quick recovery from individual server failures.
+HBase built on top of Hadoop / HDFS and the data stored in HBase can be manipulated using Hadoop’s MapReduce capabilities.
+
+HDFS vs. HBase
+
+HDFS is a distributed file system that is well suited for storing large files. It’s designed to support batch processing of data but doesn’t provide 
+  fast individual record lookups. HBase is built on top of HDFS and is designed to provide access to single rows of data in large tables. 
+
+HBase Architecture
+
+The HBase Physical Architecture consists of servers in a Master-Slave relationship. 
+  Typically, the HBase cluster has one Master node, called HMaster and multiple Region Servers called 
+  HRegionServer. Each Region Server contains multiple Regions – HRegions.
+
+  Just like in a Relational Database, data in HBase is stored in Tables and these Tables are stored in Regions. 
+  When a Table becomes too big, the Table is partitioned into multiple Regions. These Regions are assigned to 
+  Region Servers across the cluster. Each Region Server hosts roughly the same number of Regions.
+
+The HMaster in the HBase is responsible for
+
+Performing Administration
+Managing and Monitoring the Cluster
+Assigning Regions to the Region Servers
+Controlling the Load Balancing and Failover
+
+On the other hand, the HRegionServer perform the following work
+
+Hosting and managing Regions
+Splitting the Regions automatically
+Handling the read/write requests
+Communicating with the Clients directly
+
+Each Region Server contains a Write-Ahead Log (called HLog) and multiple Regions. Each Region in turn is made up of
+  a MemStore and multiple StoreFiles (HFile). The data lives in these StoreFiles in the form of Column Families. 
+  The MemStore holds in-memory modifications to the Store (data).
+
+The mapping of Regions to Region Server is kept in a system table called .META. When trying to read or write data 
+  from HBase, the clients read the required Region information from the .META table and directly communicate with
+  the appropriate Region Server. Each Region is identified by the start key (inclusive) and the end key (exclusive)
+
+HBase Data Model:
+The Data Model in HBase is designed to accommodate semi-structured data that could vary in field size, data type and columns. 
+  Additionally, the layout of the data model makes it easier to partition the data and distribute it across the cluster. 
+The Data Model in HBase is made of different logical components such as Tables, Rows, Column Families, Columns, Cells and Versions.
+
+HBase Installation steps:
+Step 1: Prerequisites
+    i.Java 8 or higher (OpenJDK or Oracle)
+    ii.SSH (if you plan to run in pseudo-distributed mode)
+    iii.hadoop installed.
+
+Step 2: Download HBase
+Get it from the official Apache website:
+
+🔗 https://hbase.apache.org/downloads.html
+vaagdevi:~/hdoop$ wget https://downloads.apache.org/hbase/2.4.17/hbase-2.4.17-bin.tar.gz
+vaagdevi:~/hdoop$ tar -xzf hbase-2.4.17-bin.tar.gz
+vaagdevi:~/hdoop$ mv hbase-2.4.17 hbase
+
+Step 3: Set Environment Variables
+
+vaagdevi:~/hdoop$ nano ~/.bashrc
+export HBASE_HOME=~/hbase
+export PATH=$PATH:$HBASE_HOME/bin
+
+*Once you add the variables, save and exit the .bashrc file. ctrl+s & ctrl+x.
+*Run the command below to apply the changes to the current running environment:
+
+vaagdevi:~$ source ~/.bashrc
+
+Step 4: Setting java path for hbase
+Now copy java home path by following command
+vaagdevi:~/hdoop$ echo $JAVA_HOME
+/usr/lib/jvm/java-8-openjdk-amd64
+
+a. Use the previously created $HBASE_HOME variable to access the hbase-env.sh file:
+vaagdevi:~/hdoop$ nano $HBASE_HOME/conf/hbase-env.sh
+
+b. Uncomment the $JAVA_HOME variable and replace the following.
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+
+Step 5:  Configure HBase (Standalone Mode):
+
+Navigate to the HBase configuration directory and edit the configuration files.
+vaagdevi:~/hdoop$ cd /hbase/conf
+
+a. Edit hbase-site.xml
+Configure the default file system (HBASE):
+
+vaagdevi:~/hdoop/hbase/conf $ nano hbase-site.xml
+Add the following configuration inside <configuration>:
+//Here you have to set the path where you want HBase to store its files.
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://localhost:9000/hbase</value>
+  </property>
+ //Here you have to set the path where you want HBase to store its built in zookeeper  files.
+   <!-- ZooKeeper quorum configuration (list of ZooKeeper servers) -->
+  <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>localhost</value>
+  </property>
+  <!-- The directory where ZooKeeper stores its data -->
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/home/vaagdevi/hdoop/hbase/zookeeper</value>
+  </property>
+<property>
+<!-- Write Ahead Log -->
+  <name>hbase.wal.provider</name>
+  <value>filesystem</value>
+</property>
+<!-- The directory where HBase stores its data -->
+ <property>
+    <name>hbase.tmp.dir</name>
+    <value>/home/vaagdevi/hdoop/hbase/HFiles</value>
+  </property>
+
+*save and exit the hbase=site.xml file. ctrl+s & ctrl+x.
+
+Step 7: Verify the Installation
+
+vaagdevi:~/hdoop/hbase/bin$ start-hbase.sh
+Check if the Hadoop&Hbase daemons are running:
+vaagdevi:~/hdoop/hbase/bin $ jps
+You should see the following processes running:
+NameNode
+DataNode
+ResourceManager
+NodeManager
+HMaster
+
+Step 8: HBase Shell
+vaagdevi:~/hdoop/hbase $ ./bin/hbase shell
+**to check status of servers
+shell> status
+**to create a table (create <table name>,<column family> )
+shell> create 'emp', 'personal data', 'professional data'
+**to verify 
+shell> list
+**to insert data into table(put <table name>,row1,<colfamily:colname>,<value>)
+put 'emp','1','personal data:name','navi'
+put 'emp','1','personal data:city','hyderabad'
+put 'emp','1','professional data:designation','manager'
+put 'emp','1','professional data:salary','50000'
+**to show table data
+shell> scan 'emp'
+
+Step 8: Access the HBase Web UI
+http://localhost:16010
+
