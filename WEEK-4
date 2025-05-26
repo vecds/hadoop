@@ -1,0 +1,89 @@
+4. Store and retrieve data in pig.
+Apache Pig is a high-level platform for processing large data sets using Hadoop. 
+Hadoop stores raw data coming from various sources like IOT, 
+websites, mobile phones, etc. and preprocessing is done in Map-reduce. 
+Pig framework converts any pig job into Map-reduce hence we can use the pig to do the ETL (Extract Transform and Load) process on the raw data. 
+
+•	Developed by Yahoo!
+•	Part of the Hadoop ecosystem.
+•	Uses a scripting language called Pig Latin.
+
+Key Features
+•	High-level language (Pig Latin) for data analysis.
+•	Extensible: You can write your own functions (UDFs) in Java, Python, etc..
+•	Handles complex data like nested structures.
+•	Optimized: Pig scripts are automatically converted into optimized MapReduce jobs.
+
+Pig Latin Overview
+Pig Latin is a data flow language. It uses a step-by-step approach where each step in the script defines a transformation.
+Apache pig framework has below major components as part of its Architecture:
+1.	Pig Latin Script
+2.	Grunt Shell (Interactive shell)
+3.	Pig Engine (Executes the script)
+4.	Parser(checks syntax, output in DAG)
+5.	Optimizer(perform logical optimization)
+6.	Compiler(generates a series of Map-Reduce jobs)
+7.	Execution Modes: (submitted to Hadoop in sorted order)
+  o	Local Mode: Runs on a single machine (good for testing)
+  o	MapReduce Mode: Runs on Hadoop cluster
+ 
+Use Cases
+•	ETL (Extract, Transform, Load) operations.
+•	Log processing.
+•	Data preparation for machine learning.
+•	Ad-hoc data analysis.
+
+Advantages of Pig
+•	Easier to write and understand than raw MapReduce.
+•	Faster development time.
+•	Scales well with Hadoop.
+•	Good for schema-less, semi-structured data.
+
+Limitations
+•	Not suitable for real-time processing.
+•	Less popular now due to rise of Apache Spark.
+•	Requires Hadoop infrastructure.
+
+Apache Pig Installation (Local Mode)
+Step 1: Prerequisites
+Before installing Pig, make sure you have the following installed:
+1.	Java (JDK) – version 8 is recommended.
+2.	Hadoop (optional for local mode, but useful).
+3.	Pig binary package.
+
+Step 2: 📦 Download Apache Pig
+Get the latest stable Pig release from the official site:
+wget https://downloads.apache.org/pig/pig-0.17.0/pig-0.17.0.tar.gz
+
+Step 3: 📂 Extract and Set Up Pig
+Extract the downloaded archive:
+tar -xvzf pig-0.17.0.tar.gz
+mv pig-0.17.0 pig
+
+Add Pig to your environment variables:
+export PIG_HOME=~/pig
+export PATH=$PIG_HOME/bin:$PATH
+
+Step 4:  Run Pig in Local Mode
+You can now launch Pig in local mode (doesn't need Hadoop cluster):
+pig -x local
+
+You’ll enter the interactive Grunt shell:
+
+grunt>
+
+Try a simple command:
+
+grunt> a = LOAD 'data.txt' USING PigStorage(',') AS (id:int, name:chararray);
+grunt> DUMP a;
+(Make sure data.txt is in the same directory or give full path)
+
+Step 5: Verify Installation
+To test, create a simple Pig Latin script (e.g., script.pig):
+-- script.pig
+data = LOAD 'data.txt' USING PigStorage(',') AS (id:int, name:chararray);
+filtered = FILTER data BY id > 10;
+DUMP filtered;
+
+Run it:
+pig -x local script.pig
