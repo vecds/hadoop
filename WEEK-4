@@ -1,8 +1,10 @@
 4. Store and retrieve data in pig.
+
 Apache Pig is a high-level platform for processing large data sets using Hadoop. 
 Hadoop stores raw data coming from various sources like IOT, 
 websites, mobile phones, etc. and preprocessing is done in Map-reduce. 
-Pig framework converts any pig job into Map-reduce hence we can use the pig to do the ETL (Extract Transform and Load) process on the raw data. 
+Pig framework converts any pig job into Map-reduce hence we can use the pig to do the ETL 
+  (Extract Transform and Load) process on the raw data. 
 
 •	Developed by Yahoo!
 •	Part of the Hadoop ecosystem.
@@ -87,3 +89,52 @@ DUMP filtered;
 
 Run it:
 pig -x local script.pig
+
+!!!Basic Pig Commands
+
+1. Fs: This will list all the files in the HDFS
+
+grunt> fs –ls
+
+2. Clear: This will clear the interactive Grunt shell.
+
+grunt> clear
+
+3. History:
+
+This command shows the commands executed so far.
+grunt> history
+
+4. Reading Data: Assuming the data resides in HDFS, we need to read data to Pig.
+
+grunt> college_students = LOAD ‘hdfs://localhost:9000/pig_data/college_data.txt’
+
+USING PigStorage(‘,’)
+
+as ( id: int, firstname:chararray, lastname:chararray, phone:chararray,
+
+city:chararray );
+
+PigStorage() is the function that loads and stores data as structured text files.
+
+5. Storing Data: The store operator stores the processed/loaded data.
+
+grunt> STORE college_students INTO ‘ hdfs://localhost:9000/pig_Output/ ‘ USING PigStorage (‘,’);
+
+Here, “/pig_Output/” is the directory where the relation needs to be stored.
+
+6. Dump Operator: This command displays the results on the screen. It usually helps in debugging.
+
+grunt> Dump college_students;
+
+7. Describe Operator: It helps the programmer view the relation’s schema.
+
+grunt> describe college_students;
+
+8. Explain: This command helps to review the logical, physical, and map-reduce execution plans.
+
+grunt> explain college_students;
+
+9. Illustrate operator: This gives step-by-step execution of statements in Pig Commands.
+
+grunt> illustrate college_students;
