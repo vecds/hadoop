@@ -61,28 +61,26 @@ public class invertedindex {
     private Text word = new Text();
     Text docID = new Text();
 
-    public void map(Object key, Text value, Context context)
-    		throws IOException, InterruptedException {
-
-     	     String line = value.toString();
-	    StringTokenizer tk = new StringTokenizer(line);
-	     String docIDstring = tk.nextToken();
-	    docID = new Text(docIDstring);
-	     //get the document ID first from the first token
-
-	    //clean the input data  : 1.remove punctuations 2.remove digits 3.convert to lower case
-             line = line.replaceAll("\\p{Punct}"," ");
-	     line = line.replaceAll("\\d"," ");
-	     line = line.toLowerCase();
-
-  	     StringTokenizer itr = new StringTokenizer(line);
-
-	       while (itr.hasMoreTokens()) {
-			 word.set(itr.nextToken());
-	         	 context.write(word, docID);
-	       }
+public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+    String line = value.toString();
+    if (line == null || line.trim().isEmpty()) {
+        return;
     }
+    
+    StringTokenizer st = new StringTokenizer(line);
+    
+    if (st.hasMoreTokens()) {
+        String docId = st.nextToken(); 
+        
+        while (st.hasMoreTokens()) {
+            String word = st.nextToken();
+           
+            context.write(new Text(word), new Text(docId));
+        }
+    }
+
   }
+}
 
   public static class IntSumReducer extends Reducer<Text,Text,Text,Text> {
 
@@ -135,16 +133,16 @@ public class invertedindex {
 
 #Create jar file
 
-Run the following commands to compile InvertedIndex.java and create a jar file.
+Run the following commands to compile invertedindex.java and create a jar file.
 
-vaagdevi:~/hdoop/hadoop$ bin/hadoop com.sun.tools.javac.Main /home/navi/hdoop/index.java
+vaagdevi:~/hdoop/hadoop$ bin/hadoop com.sun.tools.javac.Main /home/vaagdevi/hdoop/invertedindex.java
 
-vaagdevi:~/hdoop$ jar cf index.jar index*.class
+vaagdevi:~/hdoop$ jar cf invertedindex.jar index*.class
 
 # Run the jar file
 
 Create 2 documents and copy in hdfs /input directory and run then the following command
 
-vaagdevi:~/hdoop$ hadoop jar /home/navi/hdoop/index.jar index /input /output
+vaagdevi:~/hdoop$ hadoop jar /home/vaagdevi/hdoop/invertedindex.java invertedindex /input /output
 
-vaagdevi:~/hdoop$ hadoop dfs -cat /output1/part-r-00000
+vaagdevi:~/hdoop$ hadoop dfs -cat /output/part-r-00000
