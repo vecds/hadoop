@@ -30,6 +30,8 @@ Implementation in Hadoop
 export PATH=${JAVA_HOME}/bin:${PATH}
 export HADOOP_CLASSPATH=${JAVA_HOME}/lib/tools.jar
 
+#Change  <value>yarn</value> 	 to		<value>local</value> 	in mapred-site.xml
+
 # Start hadoop dfs deamons: 
 vaagdevi:~/hdoop$ start-dfs.sh
 
@@ -53,7 +55,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class invertedindex {
-
 
 
   public static class TokenizerMapper extends Mapper<Object, Text, Text, Text>
@@ -137,7 +138,7 @@ Run the following commands to compile invertedindex.java and create a jar file.
 
 vaagdevi:~/hdoop/hadoop$ bin/hadoop com.sun.tools.javac.Main /home/vaagdevi/hdoop/invertedindex.java
 
-vaagdevi:~/hdoop$ jar cf invertedindex.jar index*.class
+vaagdevi:~/hdoop$ jar cf invertedindex.jar invertedindex*.class
 
 # Run the jar file
 
