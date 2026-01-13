@@ -30,7 +30,8 @@ Implementation in Hadoop
 export PATH=${JAVA_HOME}/bin:${PATH}
 export HADOOP_CLASSPATH=${JAVA_HOME}/lib/tools.jar
 
-#Change  <value>yarn</value> 	 to		<value>local</value> 	in mapred-site.xml
+#Change  <value>yarn</value> 	 to		<value>local</value> 	
+in mapred-site.xml
 
 # Start hadoop dfs deamons: 
 vaagdevi:~/hdoop$ start-dfs.sh
@@ -39,11 +40,10 @@ vaagdevi:~/hdoop$ start-dfs.sh
 vaagdevi:~/hdoop$ nano invertedindex.java
 
 
-import java.util.StringTokenizer;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
@@ -52,84 +52,88 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class invertedindex {
 
+    // Mapper Class
 
-  public static class TokenizerMapper extends Mapper<Object, Text, Text, Text>
-{
-    private Text word = new Text();
-    Text docID = new Text();
+    public static class invertedindexMapper
+            extends Mapper<LongWritable, Text, Text, Text> {
 
-public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-    String line = value.toString();
-    if (line == null || line.trim().isEmpty()) {
-        return;
-    }
-    
-    StringTokenizer st = new StringTokenizer(line);
-    
-    if (st.hasMoreTokens()) {
-        String docId = st.nextToken(); 
-        
-        while (st.hasMoreTokens()) {
-            String word = st.nextToken();
-           
-            context.write(new Text(word), new Text(docId));
+        private Text word = new Text();
+        private Text fileName = new Text();
+
+        @Override
+        protected void map(LongWritable key, Text value, Context context)
+                throws IOException, InterruptedException {
+
+            // Get file name
+            String file = ((FileSplit) context.getInputSplit())
+                    .getPath().getName();
+            fileName.set(file);
+
+            // Tokenize line
+            String[] tokens = value.toString().toLowerCase().split("\\W+");
+
+            for (String token : tokens) {
+                if (!token.isEmpty()) {
+                    word.set(token);
+                    context.write(word, fileName);
+                }
+            }
         }
     }
 
-  }
-}
+    // Reducer Class
 
-  public static class IntSumReducer extends Reducer<Text,Text,Text,Text> {
+    public static class invertedindexReducer
+            extends Reducer<Text, Text, Text, Text> {
 
+        private Text result = new Text();
 
-    public void reduce(Text keyword, Iterable<Text> docIDList, Context output) 
-    		throws IOException, InterruptedException {
+        @Override
+        protected void reduce(Text key, Iterable<Text> values, Context context)
+                throws IOException, InterruptedException {
 
-    	HashMap<String,Integer> hashtable = new HashMap<String,Integer>();
-    	  Iterator<Text> itr = docIDList.iterator();
-    	   int count = 0;
-    	   String docID = new String();
+            Set<String> files = new HashSet<>();
 
-    	   while (itr.hasNext()) {
-    		   docID = itr.next().toString();
+            for (Text val : values) {
+                files.add(val.toString());
+            }
 
-		    if(hashtable.containsKey(docID)){
-		    	     count = (hashtable.get(docID));
-		    	     count += 1;
-		    	     hashtable.put(docID, count);
-	    	    }else{
-		   	hashtable.put(docID, 1);
-		    }
-    	   }
-
-    	   StringBuffer buf = new StringBuffer("");
-	   for(Map.Entry<String, Integer> h: hashtable.entrySet())
-		buf.append(h.getKey() + ":" + h.getValue() + "\t");
-
-	   Text optext = new Text(buf.toString());
-    	   output.write(keyword, optext);
-
+            result.set(String.join(",", files));
+            context.write(key, result);
+        }
     }
-  }
 
-  public static void main(String[] args) throws Exception {
-	    Configuration conf = new Configuration();
-	    Job job = Job.getInstance(conf, "Inverted Index");
+    // Driver (Main)
 
-	    job.setJarByClass(invertedindex.class);
-	    job.setMapperClass(TokenizerMapper.class);
-	    job.setReducerClass(IntSumReducer.class);
-	    job.setOutputKeyClass(Text.class);
-	    job.setOutputValueClass(Text.class);
-	    FileInputFormat.addInputPath(job, new Path(args[0]));
-	    FileOutputFormat.setOutputPath(job, new Path(args[1]));
-	    System.exit(job.waitForCompletion(true) ? 0 : 1);
-  }
+    public static void main(String[] args) throws Exception {
+
+        if (args.length != 2) {
+            System.err.println("Usage: InvertedIndex <input path> <output path>");
+            System.exit(-1);
+        }
+
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "Inverted Index");
+
+        job.setJarByClass(invertedindex.class);
+        job.setMapperClass(invertedindexMapper.class);
+        job.setReducerClass(invertedindexReducer.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
 }
+
 
 
 #Create jar file
@@ -142,8 +146,9 @@ vaagdevi:~/hdoop$ jar cf invertedindex.jar invertedindex*.class
 
 # Run the jar file
 
-Create 2 documents and copy in hdfs /input directory and run then the following command
+Create 2 documents ( h1.txt, h2.txt )  and copy in hdfs /input directory and run then the following command
 
-vaagdevi:~/hdoop$ hadoop jar /home/vaagdevi/hdoop/invertedindex.java invertedindex /input /output
+vaagdevi:~/hdoop$ hadoop jar /home/vaagdevi/hdoop/invertedindex.jar invertedindex /input /output
 
+To check the Inverted Index  
 vaagdevi:~/hdoop$ hadoop dfs -cat /output/part-r-00000
