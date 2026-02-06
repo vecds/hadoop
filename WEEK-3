@@ -80,11 +80,11 @@ vaagdevi:~/hdoop$ echo $JAVA_HOME
 /usr/lib/jvm/java-8-openjdk-amd64
 
 a. Use the previously created $HBASE_HOME variable to access the hbase-env.sh file:
-vaagdevi:~/hdoop$ nano $HBASE_HOME/conf/hbase-env.sh
+vaagdevi:~/hdoop/hbase/conf$ nano hbase-env.sh
 
 b. Uncomment the $JAVA_HOME variable and replace the following.
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
+export HBASE_DISABLE_HADOOP_CLASSPATH_LOOKUP="true"
 
 Step 5:  Configure HBase (Standalone Mode):
 
@@ -108,6 +108,10 @@ Add the following configuration inside <configuration>:
     <name>hbase.zookeeper.quorum</name>
     <value>localhost</value>
   </property>
+  <property>
+  <name>hbase.zookeeper.property.clientPort</name>
+  <value>2181</value>
+</property>
   <!-- The directory where ZooKeeper stores its data -->
   <property>
     <name>hbase.zookeeper.property.dataDir</name>
@@ -126,13 +130,17 @@ Add the following configuration inside <configuration>:
 
 *save and exit the hbase-site.xml file. ctrl+s & ctrl+x.
 (now create 2 directories with "HFiles" & "zookeeper" to store logs in hbase folder)
-
+///
+Note: check this before starting HBase
+Disable Hadoop dfs safemode by $ hadoop dfsadmin -safemode leave
+put same port numbers of hosts in $ sudo nano /etc/hosts 
+///
 Step 7: Verify the Installation
 
 vaagdevi:~/hdoop/hbase/bin$ start-hbase.sh
 *check logs created in HFiles & zookeeper diectories. 
 
-Check if the Hadoop&Hbase daemons are running:
+Check if the Hadoop & Hbase daemons are running:
 vaagdevi:~/hdoop/hbase/bin $ jps
 You should see the following processes running:
 NameNode
@@ -140,6 +148,9 @@ DataNode
 ResourceManager
 NodeManager
 HMaster
+
+(wait for 1 min to HBase to start completely and check logs by
+vaagdevi:~/hdoop/hbase/logs$ grep -i "Master" hbase-*-master-*.log | tail -n 20)
 
 Step 8: HBase Shell
 vaagdevi:~/hdoop/hbase $ ./bin/hbase shell
