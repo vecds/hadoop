@@ -55,14 +55,15 @@ Before installing Pig, make sure you have the following installed:
 
 Step 2: 📦 Download Apache Pig
 Get the latest stable Pig release from the official site:
-wget https://downloads.apache.org/pig/pig-0.17.0/pig-0.17.0.tar.gz
+wget https://downloads.apache.org/pig/pig-0.16.0/pig-0.16.0.tar.gz
 
 Step 3: 📂 Extract and Set Up Pig
 Extract the downloaded archive:
-tar -xvzf pig-0.17.0.tar.gz
-mv pig-0.17.0 pig
+tar -xvzf pig-0.16.0.tar.gz
+mv pig-0.16.0 pig
 
 Add Pig to your environment variables:
+
 export PIG_HOME=~/pig
 export PATH=$PIG_HOME/bin:$PATH
 
@@ -74,21 +75,68 @@ You’ll enter the interactive Grunt shell:
 
 grunt>
 
-Try a simple command:
+sample commands:
 
-grunt> a = LOAD 'data.txt' USING PigStorage(',') AS (id:int, name:chararray);
-grunt> DUMP a;
-(Make sure data.txt is in the same directory or give full path)
+create a csv file-  employees.csv
 
-Step 5: Verify Installation
+1,John,25,50000,IT
+2,Alice,30,60000,HR
+3,Bob,28,55000,IT
+4,Carol,35,70000,Finance
+5,David,40,80000,HR
+
+
+1. DUMP
+grunt> employees = LOAD '/home/vaagdevi/hdoop/employees.csv' USING PigStorage(',') 
+        AS (id:int, name:chararray, age:int, salary:int, dept:chararray);
+grunt> DUMP employees;
+
+2. FILTER
+grunt> high_salary = FILTER employees BY salary > 60000;
+grunt> DUMP high_salary;
+
+
+3. FOREACH GENERATE
+grunt> names_salary = FOREACH employees GENERATE name, salary;
+grunt> DUMP names_salary;
+
+4. GROUP + COUNT
+grunt> group_by_dept = GROUP employees BY dept;
+
+grunt> dept_count = FOREACH group_by_dept
+             GENERATE group AS dept,
+             COUNT(employees) AS total_employees;
+
+grunt> DUMP dept_count;
+
+5. ORDER BY
+
+grunt> sorted_emp = ORDER employees BY salary DESC;
+grunt> DUMP sorted_emp;
+
+
+Step 5: STORE AND RETRIVE DATA 
+
 To test, create a simple Pig Latin script (e.g., script.pig):
--- script.pig
-data = LOAD 'data.txt' USING PigStorage(',') AS (id:int, name:chararray);
-filtered = FILTER data BY id > 10;
-DUMP filtered;
 
-Run it:
-pig -x local script.pig
+Create a script and move into hdfs
+
+$ script.pig
+
+data = LOAD '/input/employees.csv' USING PigStorage(',') AS (id:int, name:chararray, age:int, salary:int, dept:chararray);
+filtered = FILTER data BY age > 25;
+DUMP filtered;
+STORE filtered INTO '/output/filtered_employees' USING PigStorage(',');
+
+*save and exit file. ctrl+s & ctrl+x.
+
+vaagdevi:~/hdoop$ hdfs dfs -mkdir /input
+vaagdevi:~/hdoop$ hdfs dfs -mkdir /output
+vaagdevi:~/hdoop$ hdfs dfs -put /home/vaagdevi/hdoop/employees.csv /input/
+vaagdevi:~/hdoop$ hdfs dfs -ls /input/
+vaagdevi:~/hdoop$ pig script.pig
+vaagdevi:~/hdoop$ hdfs dfs -cat /output/filtered_employees/part-m-00000
+
 
 !!!Basic Pig Commands
 
@@ -100,20 +148,15 @@ grunt> fs –ls
 
 grunt> clear
 
-3. History:
+3. History: This command shows the commands executed so far.
 
-This command shows the commands executed so far.
 grunt> history
 
 4. Reading Data: Assuming the data resides in HDFS, we need to read data to Pig.
 
 grunt> college_students = LOAD ‘hdfs://localhost:9000/pig_data/college_data.txt’
 
-USING PigStorage(‘,’)
-
-as ( id: int, firstname:chararray, lastname:chararray, phone:chararray,
-
-city:chararray );
+USING PigStorage(‘,’) as ( id: int, firstname:chararray, lastname:chararray, phone:chararray, city:chararray );
 
 PigStorage() is the function that loads and stores data as structured text files.
 
@@ -135,6 +178,3 @@ grunt> describe college_students;
 
 grunt> explain college_students;
 
-9. Illustrate operator: This gives step-by-step execution of statements in Pig Commands.
-
-grunt> illustrate college_students;
