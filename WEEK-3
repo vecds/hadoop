@@ -160,20 +160,31 @@ vaagdevi:~/hdoop/hbase $ ./bin/hbase shell
 shell> status
 
 **to create a table (create <table name>,<column family> )
-shell> create 'emp', 'personal data', 'professional data'
+shell> create 'employees', 'personal data', 'professional data'
 
 **to verify 
 shell> list
 
 **to insert data into table(put <table name>,row1,<colfamily:colname>,<value>)
-put 'emp','1','personal data:name','navi'
-put 'emp','1','personal data:city','hyderabad'
-put 'emp','1','professional data:designation','manager'
-put 'emp','1','professional data:salary','50000'
+shell> put 'employees','1','personal:name','navi'
+shell> put 'employees','1','personal:age','30'
+shell> put 'employees','1','job:salary','50000'
+shell> put 'employees','1','job:dept','IT'
 
 **to show table data
-shell> scan 'emp'
+shell> scan 'employees'
 
 Step 8: Access the HBase Web UI
 http://localhost:16010
 
+Bulk Load from HDFS
+
+vaagdevi:~/hdoop$ hbase org.apache.hadoop.hbase.mapreduce.Import employees hdfs://localhost:9000/input/employees.csv
+vaagdevi:~/hdoop$ hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.separator=, 
+    -Dimporttsv.columns=HBASE_ROW_KEY,personal:name,personal:age,job:salary,job:dept 
+    employees hdfs://localhost:9000/input/employees.csv
+
+
+shell> get 'employees', '3'
+shell> scan 'employees', {COLUMNS => ['job:salary','personal:name'], FILTER => "SingleColumnValueFilter('job','salary', >, 'binary:60000')"}
+shell> count 'employees'
