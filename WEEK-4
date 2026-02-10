@@ -121,7 +121,7 @@ To test, create a simple Pig Latin script (e.g., script.pig):
 
 Create a script and move into hdfs
 
-$ script.pig
+vaagdevi:~/hdoop$ nano script.pig
 
 data = LOAD '/input/employees.csv' USING PigStorage(',') AS (id:int, name:chararray, age:int, salary:int, dept:chararray);
 filtered = FILTER data BY age > 25;
