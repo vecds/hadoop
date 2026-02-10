@@ -58,14 +58,15 @@ Step 1: Prerequisites
 Step 2: Download HBase
 Get it from the official Apache website:
 
-🔗 https://hbase.apache.org/downloads.html
-vaagdevi:~/hdoop$ wget https://downloads.apache.org/hbase/2.4.17/hbase-2.4.17-bin.tar.gz
-vaagdevi:~/hdoop$ tar -xzf hbase-2.4.17-bin.tar.gz
-vaagdevi:~/hdoop$ mv hbase-2.4.17 hbase
+🔗 https://hbase.apache.org/downloads.html 
+vaagdevi:~/hdoop$ wget https://dlcdn.apache.org/hbase/2.5.13/hbase-2.5.13-bin.tar.gz
+vaagdevi:~/hdoop$ tar -xzf hbase-2.5.13.bin.tar.gz
+vaagdevi:~/hdoop$ mv hbase-2.5.13 hbase
 
 Step 3: Set Environment Variables
 
 vaagdevi:~/hdoop$ nano ~/.bashrc
+
 export HBASE_HOME=/home/vaagdevi/hdoop/hbase
 export PATH=$PATH:$HBASE_HOME/bin
 
@@ -150,7 +151,7 @@ NodeManager
 HMaster
 
 (wait for 1 min to HBase to start completely and check logs by
-vaagdevi:~/hdoop/hbase/logs$ grep -i "Master" hbase-*-master-*.log | tail -n 20)
+vaagdevi:~/hdoop/hbase/logs$ grep -i "Master" hbase-*-master-*.log | tail -n 20  )
 
 Step 8: HBase Shell
 vaagdevi:~/hdoop/hbase $ ./bin/hbase shell
