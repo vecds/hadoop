@@ -2,9 +2,8 @@
 
 HBase:
 HBase is a column-oriented database that’s an open-source implementation of Google’s Big Table storage architecture. 
-It can manage structured and semi-structured data and has some built-in features such as scalability, versioning, compression and garbage collection.
-
-Since its uses write-ahead logging and distributed configuration, it can provide fault-tolerance and quick recovery from individual server failures.
+It can manage structured and semi-structured data. Since its uses write-ahead logging and distributed configuration, 
+it can provide fault-tolerance and quick recovery from individual server failures.
 HBase built on top of Hadoop / HDFS and the data stored in HBase can be manipulated using Hadoop’s MapReduce capabilities.
 
 HDFS vs. HBase
@@ -44,12 +43,8 @@ The mapping of Regions to Region Server is kept in a system table called .META. 
   from HBase, the clients read the required Region information from the .META table and directly communicate with
   the appropriate Region Server. Each Region is identified by the start key (inclusive) and the end key (exclusive)
 
-HBase Data Model:
-The Data Model in HBase is designed to accommodate semi-structured data that could vary in field size, data type and columns. 
-  Additionally, the layout of the data model makes it easier to partition the data and distribute it across the cluster. 
-The Data Model in HBase is made of different logical components such as Tables, Rows, Column Families, Columns, Cells and Versions.
-
 HBase Installation steps:
+
 Step 1: Prerequisites
     i.Java 8 or higher (OpenJDK or Oracle)
     ii.SSH (if you plan to run in pseudo-distributed mode)
@@ -70,8 +65,7 @@ vaagdevi:~/hdoop$ nano ~/.bashrc
 export HBASE_HOME=/home/vaagdevi/hdoop/hbase
 export PATH=$PATH:$HBASE_HOME/bin
 
-*Once you add the variables, save and exit the .bashrc file. ctrl+s & ctrl+x.
-*Run the command below to apply the changes to the current running environment:
+*Once you add the variables, save and exit. ctrl+s & ctrl+x.
 
 vaagdevi:~$ source ~/.bashrc
 
@@ -134,12 +128,16 @@ Add the following configuration inside <configuration>:
 ///
 Note: check this before starting HBase
 Disable Hadoop dfs safemode by $ hadoop dfsadmin -safemode leave
-put same port numbers of hosts in $ sudo nano /etc/hosts 
+put same port numbers of hosts in $ sudo nano /etc/hosts
+127.0.0.1       localhost
+127.0.0.1       vaagdevi
+
 ///
+
 Step 7: Verify the Installation
 
 vaagdevi:~/hdoop/hbase/bin$ start-hbase.sh
-*check logs created in HFiles & zookeeper diectories. 
+*check logs created in zookeeper diectory. 
 
 Check if the Hadoop & Hbase daemons are running:
 vaagdevi:~/hdoop/hbase/bin $ jps
@@ -160,7 +158,8 @@ vaagdevi:~/hdoop/hbase $ ./bin/hbase shell
 shell> status
 
 **to create a table (create <table name>,<column family> )
-shell> create 'employees', 'personal data', 'professional data'
+
+shell> create 'employees', 'personal', 'job'
 
 **to verify 
 shell> list
@@ -188,3 +187,10 @@ vaagdevi:~/hdoop$ hbase org.apache.hadoop.hbase.mapreduce.ImportTsv -Dimporttsv.
 shell> get 'employees', '3'
 shell> scan 'employees', {COLUMNS => ['job:salary','personal:name'], FILTER => "SingleColumnValueFilter('job','salary', >, 'binary:60000')"}
 shell> count 'employees'
+shell> disable 'employees'
+shell> drop 'employees'
+
+
+Processing big data in HBase involves storing large datasets in HDFS, organizing them in HBase tables 
+    with column families, and performing fast read/write operations, 
+    often combined with Hadoop ecosystem tools for analytics.
