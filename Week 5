@@ -1,0 +1,91 @@
+5. Perform data analysis using MongoDB
+MongoDB is a popular document-oriented NoSQL database that stores data in a flexible BSON format, 
+  enabling fast and efficient storage and retrieval. It is available under the SSPL, which is not 
+  recognized as an open-source license by the Open Source Initiative due to commercial use restrictions.
+
+Working of MongoDB
+In a MongoDB sharded cluster, the components work together as follows:
+
+Client Application: The application sends requests to MongoDB to read or write data.
+Query Router (mongos): The query router receives the client request and determines which shard should handle it.
+Config Servers: Store metadata about the cluster, including which data resides on which shard.
+Shards: Data is horizontally distributed across replica sets, with the primary handling writes and secondaries providing replication and reads.
+Primary Node: Handles all write operations.
+Secondary Nodes: Replicate data from the primary for high availability and read operations.
+
+Basic SQL Operations
+MongoDB provides several basic operations to manage and manipulate data efficiently:
+
+Create (Insert): Add new documents to a collection.
+Read (Find): Retrieve documents from a collection based on query criteria.
+Update: Modify existing documents in a collection.
+Delete: Remove documents from a collection.
+
+Features of the MongoDB database
+MongoDB offers several key features that make it efficient and scalable:
+
+Document Oriented: Stores all related data together in a single, flexible document rather than multiple tables.
+Indexing: Enables fast queries by avoiding full collection scans, crucial for handling large data efficiently.
+Scalability: Uses sharding to distribute data across multiple servers; easily add new machines to expand.
+Replication and High Availability: Stores multiple data copies on different servers for redundancy and fault tolerance.
+Aggregation: Processes and summarizes data (like SQL GROUP BY) using operations such as sum, avg, min, and max.
+
+MongoDB powers a wide range of modern applications:
+
+Websites & Apps: Real-Time Analytics: Content Management & Personalization: Big Data & IoT:
+
+# Steps to Install and Configure MongoDB in Ubuntu
+
+vaagdevi $ sudo apt update && sudo apt upgrade
+
+vaagdevi $ sudo apt install -y mongodb
+
+vaagdevi $ sudo systemctl status mongodb
+
+# MongoDB services can be started and stopped with the use of following commands:
+
+vaagdevi $ sudo systemctl start mongodb
+
+vaagdevi $ sudo systemctl stop mongodb
+
+# Accessing the MongoDB Shell
+
+To access the MongoDB shell, simply type the following command in your terminal:
+vaagdevi $ mongo
+#Check all the existing databases by using the following command
+test> show dbs
+Creating a database
+test >use vaagdevi
+
+Collection is created using createCollection() method.Collection name is passed as argument in the method.
+vaagdevi> db.createCollection('Student');
+vaagdevi> db.Student.insertOne({"name":"Rahul","age":"21"})
+Inserting more than one document at a time
+db.collection.insertMany([,document_1, document_2.....,]),
+
+PERFORMING DATA ANALYSIS:
+Step 1: Install MongoDB Hadoop Connector
+
+Download from MongoDB repository and add JAR to Hadoop classpath.
+
+Step 2: Configure Hadoop Job
+
+Example MapReduce configuration:
+
+Configuration conf = new Configuration();
+conf.set("mongo.input.uri", "mongodb://localhost:27017/vaagdevi.Students");
+
+Job job = Job.getInstance(conf, "Mongo Hadoop Job");
+job.setInputFormatClass(MongoInputFormat.class);
+job.setOutputKeyClass(Text.class);
+job.setOutputValueClass(IntWritable.class);
+
+job.setOutputFormatClass(TextOutputFormat.class);
+
+FileOutputFormat.setOutputPath(job, 
+    new Path("/user/hadoop/output"));
+
+Step 3: Write Mapper & Reducer
+
+Mapper processes MongoDB documents.
+Reducer aggregates results.
